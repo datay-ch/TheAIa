@@ -15,7 +15,7 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Chargement de l'image en base64
+# Charger l'image en base64
 def get_base64_image():
     logo_path = "logosaas.jpg"  # Assurez-vous que le logo est dans le même dossier que le script
     if os.path.exists(logo_path):
@@ -101,28 +101,13 @@ st.markdown(f"""
         color: #888;
     }}
 
-    /* Responsivité pour mobile : masquage du menu latéral et affichage d'un bouton */
+    /* Responsivité pour mobile */
     @media (max-width: 768px) {{
-        .sidebar .sidebar-content {{
-            display: none;
+        .gradient-title {{
+            font-size: 1.5em;
         }}
-        .menu-button {{
-            display: block;
-            background-color: #ff5f6d;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }}
-    }}
-
-    /* Masquage du bouton sur grand écran */
-    @media (min-width: 769px) {{
-        .menu-button {{
-            display: none;
+        .footer {{
+            font-size: 12px;
         }}
     }}
     </style>
@@ -203,9 +188,7 @@ def afficher_page_inscription():
 
 # Page de connexion
 def afficher_page_connexion():
-    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown("<h1 class='gradient-title'>Bienvenue sur Théâtre AI</h1>", unsafe_allow_html=True)
-
+    afficher_titre_avec_logo("Bienvenue sur Théâtre AI")
     # Champs de connexion
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
@@ -240,8 +223,7 @@ def afficher_page_creation():
 
 # Page de la galerie
 def afficher_page_galerie():
-    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown("<h1 class='gradient-title'>Galerie de Pièces en PDF</h1>", unsafe_allow_html=True)
+    afficher_titre_avec_logo("Galerie de Pièces en PDF")
     st.write("Cliquez sur une pièce pour l'ouvrir dans un nouvel onglet.")
     pieces = [
         {"titre": "Les Dieux Réincarnés", "resume": "Dans un monde en déclin, les anciens dieux se battent contre des forces modernes qui menacent leur existence.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/dieux_reincarnes.pdf"},
@@ -255,8 +237,7 @@ def afficher_page_galerie():
 
 # Page de l'historique
 def afficher_page_historique():
-    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown("<h1 class='gradient-title'>Historique des Créations</h1>", unsafe_allow_html=True)
+    afficher_titre_avec_logo("Historique des Créations")
     user_id = st.session_state.authenticated_user.id
     creations = session.query(Creation).filter_by(user_id=user_id).all()
     if creations:
@@ -269,10 +250,10 @@ def afficher_page_historique():
     else:
         st.write("Aucune création dans l'historique.")
 
-# Navigation avec le menu responsive
+# Navigation avec le menu latéral
 if st.session_state.authenticated_user:
-    st.markdown("<div class='menu-button'>Menu</div>", unsafe_allow_html=True)
-    choix_page = st.radio("Navigation", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"], index=0)
+    st.sidebar.title("Menu")
+    choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
     st.session_state.page = choix_page
 
     # Bouton Déconnexion en bas de la barre latérale
