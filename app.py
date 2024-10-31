@@ -39,6 +39,75 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
+    @keyframes gradient-animation {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
+
+    /* Style pour le titre avec dégradé animé dynamique */
+    .gradient-title {{
+        font-size: 2em;
+        font-weight: bold;
+        text-align: center;
+        background: linear-gradient(270deg, #ff5f6d, #ffc371, #ff5f6d);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: dynamic-gradient 6s ease infinite;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }}
+    
+    .title-logo {{
+        width: 30px;
+        height: auto;
+        margin-left: 10px;
+    }}
+
+    @keyframes dynamic-gradient {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
+
+    /* Style pour le texte défilant en bas */
+    .footer {{
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        text-align: center;
+        font-size: 14px;
+        overflow: hidden;
+    }}
+    .scroll-text {{
+        display: inline-block;
+        background: linear-gradient(90deg, #ff5f6d, #ffc371, #ff5f6d);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: scroll 10s linear infinite, gradient-animation 3s ease infinite;
+        white-space: nowrap;
+        font-weight: bold;
+    }}
+    
+    @keyframes scroll {{
+        0% {{ transform: translateX(100%); }}
+        100% {{ transform: translateX(-100%); }}
+    }}
+
+    /* Responsivité pour mobile */
+    @media (max-width: 768px) {{
+        .gradient-title {{
+            font-size: 1.5em;
+        }}
+        .footer {{
+            font-size: 12px;
+        }}
+    }}
+
     /* Suppression des bordures des boutons */
     button {{
         border: none;
@@ -71,7 +140,7 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 # Fonction pour afficher un titre avec logo, notification personnalisée
-def afficher_titre_avec_logo(titre, username):
+def afficher_titre_avec_logo(titre, username=""):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
     st.markdown(f"""
         <h1 class='gradient-title'>
@@ -141,7 +210,7 @@ def signup(username, password, email, first_name, last_name, phone):
 
 # Page d'inscription
 def afficher_page_inscription():
-    afficher_titre_avec_logo("Créer un Compte", "")
+    afficher_titre_avec_logo("Créer un Compte")
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
     email = st.text_input("Adresse e-mail")
@@ -157,7 +226,9 @@ def afficher_page_inscription():
 
 # Page de connexion avec un disclaimer
 def afficher_page_connexion():
-    afficher_titre_avec_logo("Bienvenue sur Théâtre AI", "")
+    afficher_titre_avec_logo("Bienvenue sur Théâtre AI")
+
+    # Disclaimer
     st.write("### Bienvenue au Théâtre AI ")
     st.write("Découvrez une nouvelle manière de créer, de partager et de découvrir des pièces de théâtre avec Théâtre AI. "
              "Inscrivez-vous pour accéder à toutes les fonctionnalités de création et de gestion de vos œuvres théâtrales.")
