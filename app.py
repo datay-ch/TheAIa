@@ -27,26 +27,13 @@ st.markdown("""
         font-weight: bold;
         border-radius: 15px;
         margin-bottom: 15px;
-        position: relative;
     }
     
-    /* Icône de déconnexion en haut à droite sans bordure */
-    .logout-icon {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-        background: none;
-        border: none;
-    }
-    
-    /* Boutons ajustés (même taille) */
+    /* Style sans bordure pour les boutons */
     .stButton>button {
         color: #ff5f6d;
-        border: 2px solid #ff5f6d;
         background-color: transparent;
+        border: none;
         border-radius: 20px;
         padding: 10px 20px;
         font-size: 16px;
@@ -73,7 +60,7 @@ st.markdown("""
 st.markdown("<div class='header-bar'>Bienvenue au Théâtre AI</div>", unsafe_allow_html=True)
 
 # Charger et afficher le logo dans la barre latérale
-logo_path = "/mnt/data/logosaas.jpg"
+logo_path = "logosaas.jpg"
 if os.path.exists(logo_path):
     st.sidebar.image(logo_path, width=200, caption="Théâtre AI")
 
@@ -125,12 +112,6 @@ def signup(username, password, email, first_name, last_name, phone):
     session.commit()
     return True
 
-# Fonction d'affichage de l'icône de déconnexion
-def afficher_icone_deconnexion():
-    if st.button("Déconnexion", key="logout", help="Déconnexion", type="primary"):
-        st.session_state.authenticated_user = None
-        st.session_state.page = "connexion"
-
 # Page d'inscription
 def afficher_page_inscription():
     st.markdown("<h1>Créer un Compte</h1>", unsafe_allow_html=True)
@@ -164,7 +145,7 @@ def afficher_page_connexion():
         else:
             st.error("Nom d'utilisateur ou mot de passe incorrect")
 
-    # Bouton "Créer un compte" sous le bouton de connexion, même taille que le bouton de connexion
+    # Bouton "Créer un compte" sous le bouton de connexion
     if st.button("Créer un compte"):
         st.session_state.page = "inscription"
 
@@ -214,7 +195,7 @@ def afficher_page_historique():
 
 # Navigation avec le menu et affichage des pages
 if st.session_state.authenticated_user:
-    afficher_icone_deconnexion()
+    st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
     st.sidebar.title("Menu")
     choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
     st.session_state.page = choix_page
