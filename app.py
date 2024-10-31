@@ -25,6 +25,14 @@ def get_base64_image():
 
 logo_base64 = get_base64_image()
 
+# Initialiser l'état des notifications
+if "show_notifications" not in st.session_state:
+    st.session_state.show_notifications = False
+
+# Fonction pour basculer l'état des notifications
+def toggle_notifications():
+    st.session_state.show_notifications = not st.session_state.show_notifications
+
 # CSS pour le style personnalisé
 st.markdown(f"""
     <style>
@@ -90,14 +98,14 @@ st.markdown(f"""
         font-weight: bold;
     }}
 
-    /* Popup de notification affiché par défaut */
+    /* Popup de notification */
     .popup {{
         position: absolute;
         top: 35px;
         right: -10px;
-        width: 280px;
+        width: 300px;
         padding: 15px;
-        background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
+        background-color: rgba(0, 0, 0, 0.9); /* Fond semi-transparent */
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         color: white;
@@ -127,25 +135,37 @@ st.markdown(f"""
 # Fonction pour afficher un titre avec logo et icône de notification
 def afficher_titre_avec_logo(titre, username):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
+    # Afficher la cloche de notification et le bouton de toggle
     st.markdown(f"""
         <h1 class='gradient-title'>
             {titre} <img src='data:image/jpg;base64,{logo_base64}' alt='logo' class='title-logo'/>
-            <div class="notification" title="Notifications">
+            <div class="notification" title="Notifications" onclick="document.getElementById('notif-button').click();">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
                     <path d="M8 16a2 2 0 0 0 1.985-1.75H6.016A2 2 0 0 0 8 16zm.104-1.793a2.5 2.5 0 0 1-1.208-2.89A6.002 6.002 0 0 1 2 9V6.5a5.5 5.5 0 1 1 11 0V9c0 1.538-.747 2.926-1.9 3.617a2.5 2.5 0 0 1-1.208 2.89h-1.888z"/>
                 </svg>
                 <span class="badge">3</span>
             </div>
         </h1>
-        <div class="popup">
-            <p>Bonjour {username}</p>
-            <ul>
-                <li>🎉 Nouvelle mise à jour : explorez nos dernières fonctionnalités !</li>
-                <li>🕒 Votre création est en cours de traitement et sera prête sous peu.</li>
-                <li>🌟 N'oubliez pas de visiter la galerie pour voir les nouvelles pièces.</li>
-            </ul>
-        </div>
     """, unsafe_allow_html=True)
+
+    # Bouton caché pour déclencher le changement d'état des notifications
+    if st.button("Afficher/Masquer Notifications", key="notif-button", on_click=toggle_notifications):
+        pass
+
+    # Afficher les notifications si l'état est activé
+    if st.session_state.show_notifications:
+        st.markdown("""
+            <div class="popup">
+                <p>Bonjour {username}</p>
+                <ul>
+                    <li>🎉 Nouvelle mise à jour : explorez nos dernières fonctionnalités !</li>
+                    <li>🕒 Votre création est en cours de traitement et sera prête sous peu.</li>
+                    <li>🌟 N'oubliez pas de visiter la galerie pour voir les nouvelles pièces.</li>
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
+
+# Le reste du code est inchangé...
 
 # Définition des modèles de la base de données (inchangée)
 class User(Base):
