@@ -15,21 +15,26 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# CSS pour le style personnalisé
+# CSS pour le style personnalisé, incluant la barre animée
 st.markdown("""
     <style>
-    /* Barre de titre avec dégradé rose */
-    .header-bar {
-        background: linear-gradient(to right, #ff5f6d, #ffc371);
-        padding: 10px;
-        text-align: center;
-        color: white;
-        font-size: 24px;
-        font-weight: bold;
+    /* Barre de titre avec dégradé rose animé */
+    .animated-bar {
+        width: 100%;
+        height: 10px;
+        background: linear-gradient(90deg, #ff5f6d, #ffc371);
+        background-size: 200% 200%;
+        animation: gradient-animation 3s ease infinite;
         border-radius: 15px;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
-    
+
+    @keyframes gradient-animation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
     /* Style sans bordure pour les boutons */
     .stButton>button {
         color: #ff5f6d;
@@ -68,6 +73,10 @@ st.markdown("""
 
 # Fonction pour afficher un titre avec une icône de logo
 def afficher_titre_avec_logo(titre):
+    # Barre de dégradé animée
+    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
+
+    # Affichage du titre avec l'icône de logo
     logo_path = "logosaas.jpg"
     if os.path.exists(logo_path):
         with open(logo_path, "rb") as image_file:
@@ -178,6 +187,7 @@ def afficher_page_creation():
 
 # Page de la galerie
 def afficher_page_galerie():
+    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
     st.markdown("<h1>Galerie de Pièces en PDF 🎭</h1>", unsafe_allow_html=True)
     st.write("Cliquez sur une pièce pour l'ouvrir dans un nouvel onglet.")
     pieces = [
@@ -192,6 +202,7 @@ def afficher_page_galerie():
 
 # Page de l'historique
 def afficher_page_historique():
+    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
     st.markdown("<h1>Historique des Créations</h1>", unsafe_allow_html=True)
     user_id = st.session_state.authenticated_user.id
     creations = session.query(Creation).filter_by(user_id=user_id).all()
