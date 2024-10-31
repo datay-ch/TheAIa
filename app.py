@@ -75,12 +75,6 @@ st.markdown(f"""
         margin-left: 10px;
     }}
 
-    @keyframes dynamic-gradient {{
-        0% {{ background-position: 0% 50%; }}
-        50% {{ background-position: 100% 50%; }}
-        100% {{ background-position: 0% 50%; }}
-    }}
-
     /* Style pour le texte défilant en bas */
     .footer {{
         width: 100%;
@@ -262,9 +256,9 @@ def afficher_page_inscription():
 
 # Page de connexion avec un disclaimer
 def afficher_page_connexion():
-    afficher_titre_avec_logo("Bienvenue sur Théâtre AI", "")
-
-    # Disclaimer
+    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
+    st.markdown(f"<h1 class='gradient-title'>Bienvenue sur Théâtre AI</h1>", unsafe_allow_html=True)
+    
     st.write("### Bienvenue au Théâtre AI ")
     st.write("Découvrez une nouvelle manière de créer, de partager et de découvrir des pièces de théâtre avec Théâtre AI. "
              "Inscrivez-vous pour accéder à toutes les fonctionnalités de création et de gestion de vos œuvres théâtrales.")
