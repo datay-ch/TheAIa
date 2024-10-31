@@ -141,7 +141,7 @@ st.markdown(f"""
         font-weight: bold;
     }}
 
-    /* Popup de notification stylisé */
+    /* Popup de notification avec fond semi-transparent */
     .popup {{
         display: none;
         position: absolute;
@@ -149,7 +149,7 @@ st.markdown(f"""
         right: -10px;
         width: 280px;
         padding: 15px;
-        background-color: #444;
+        background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         color: white;
@@ -191,9 +191,9 @@ def afficher_titre_avec_logo(titre, username):
                 <div class="popup">
                     <p>Bonjour {username}</p>
                     <ul>
-                        <li>Votre création est en cours. Disponible sous 48h.</li>
-                        <li>Nouveauté : découvrez les mises à jour !</li>
-                        <li>Restez connecté pour d'autres notifications.</li>
+                        <li>Votre création est en cours de traitement.</li>
+                        <li>Nouveautés : Découvrez les nouvelles fonctionnalités !</li>
+                        <li>Notification : Votre pièce sera disponible dans la galerie sous peu.</li>
                     </ul>
                 </div>
             </div>
