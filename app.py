@@ -73,32 +73,29 @@ st.markdown(f"""
         100% {{ background-position: 0% 50%; }}
     }}
 
-    /* Style sans bordure pour les boutons */
-    .stButton>button {{
-        color: #ff5f6d;
-        background-color: transparent;
-        border: none;
-        border-radius: 20px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s, color 0.3s;
-        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }}
-    .stButton>button:hover {{
-        background-color: #ff5f6d;
-        color: white;
-    }}
-
-    /* Pied de page */
+    /* Style pour le texte défilant en bas */
     .footer {{
+        width: 100%;
         position: fixed;
         bottom: 0;
-        width: 100%;
         text-align: center;
-        padding: 10px 0;
         font-size: 14px;
-        color: #888;
+        overflow: hidden;
+    }}
+    .scroll-text {{
+        display: inline-block;
+        background: linear-gradient(90deg, #ff5f6d, #ffc371, #ff5f6d);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: scroll 10s linear infinite, gradient-animation 3s ease infinite;
+        white-space: nowrap;
+        font-weight: bold;
+    }}
+    
+    @keyframes scroll {{
+        0% {{ transform: translateX(100%); }}
+        100% {{ transform: translateX(-100%); }}
     }}
 
     /* Responsivité pour mobile */
@@ -279,5 +276,9 @@ else:
     else:
         afficher_page_connexion()
 
-# Afficher le pied de page en bas de la page
-st.markdown("<div class='footer'>Tous droits réservés et créé par Aya Rochdi</div>", unsafe_allow_html=True)
+# Afficher le pied de page défilant en bas de la page
+st.markdown("""
+<div class="footer">
+    <span class="scroll-text">Tous droits réservés et créé par Aya Rochdi</span>
+</div>
+""", unsafe_allow_html=True)
