@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 import os
+import base64
 
 # Configuration de la page
 st.set_page_config(page_title="Théâtre AI", page_icon="🎭", layout="centered")
@@ -48,9 +49,9 @@ st.markdown("""
 
     /* Style pour l'icône de logo */
     .title-icon {
-        width: 5px; /* Taille réduite de l'icône */
+        width: 20px; /* Taille très réduite de l'icône */
         vertical-align: middle;
-        margin-right: 10px;
+        margin-right: 8px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -59,7 +60,9 @@ st.markdown("""
 def afficher_titre_avec_logo(titre):
     logo_path = "logosaas.jpg"
     if os.path.exists(logo_path):
-        st.markdown(f"<h1><img src='data:image/jpg;base64,{st.image(logo_path, use_column_width=False)}' class='title-icon' alt='logo'/> {titre}</h1>", unsafe_allow_html=True)
+        with open(logo_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+        st.markdown(f"<h1><img src='data:image/jpg;base64,{encoded_string}' class='title-icon' alt='logo'/> {titre}</h1>", unsafe_allow_html=True)
     else:
         st.markdown(f"<h1>{titre}</h1>", unsafe_allow_html=True)
 
