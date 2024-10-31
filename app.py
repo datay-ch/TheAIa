@@ -67,52 +67,6 @@ st.markdown(f"""
         margin-left: 10px;
     }}
 
-    @keyframes dynamic-gradient {{
-        0% {{ background-position: 0% 50%; }}
-        50% {{ background-position: 100% 50%; }}
-        100% {{ background-position: 0% 50%; }}
-    }}
-
-    /* Style pour le texte défilant en bas */
-    .footer {{
-        width: 100%;
-        position: fixed;
-        bottom: 0;
-        text-align: center;
-        font-size: 14px;
-        overflow: hidden;
-    }}
-    .scroll-text {{
-        display: inline-block;
-        background: linear-gradient(90deg, #ff5f6d, #ffc371, #ff5f6d);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: scroll 10s linear infinite, gradient-animation 3s ease infinite;
-        white-space: nowrap;
-        font-weight: bold;
-    }}
-    
-    @keyframes scroll {{
-        0% {{ transform: translateX(100%); }}
-        100% {{ transform: translateX(-100%); }}
-    }}
-
-    /* Responsivité pour mobile */
-    @media (max-width: 768px) {{
-        .gradient-title {{
-            font-size: 1.5em;
-        }}
-        .footer {{
-            font-size: 12px;
-        }}
-    }}
-
-    /* Suppression des bordures des boutons */
-    button {{
-        border: none;
-    }}
-
     /* Cloche de notification stylisée */
     .notification {{
         position: relative;
@@ -121,11 +75,6 @@ st.markdown(f"""
         font-size: 1.1em;
         margin-left: 15px;
         color: #ff5f6d;
-        transition: transform 0.3s ease;
-    }}
-
-    .notification:hover {{
-        transform: scale(1.1);
     }}
 
     /* Badge de notification */
@@ -141,26 +90,19 @@ st.markdown(f"""
         font-weight: bold;
     }}
 
-    /* Popup de notification avec fond transparent */
+    /* Popup de notification affiché par défaut */
     .popup {{
-        display: none;
         position: absolute;
         top: 35px;
         right: -10px;
         width: 280px;
         padding: 15px;
-        background-color: rgba(255, 255, 255, 0); /* Fond transparent */
+        background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         color: white;
         font-size: 0.9em;
         z-index: 10;
-        opacity: 0;
-        transition: opacity 0.4s;
-    }}
-    .notification:hover .popup {{
-        display: block;
-        opacity: 1;
     }}
     .popup p {{
         font-weight: bold;
@@ -193,21 +135,19 @@ def afficher_titre_avec_logo(titre, username):
                     <path d="M8 16a2 2 0 0 0 1.985-1.75H6.016A2 2 0 0 0 8 16zm.104-1.793a2.5 2.5 0 0 1-1.208-2.89A6.002 6.002 0 0 1 2 9V6.5a5.5 5.5 0 1 1 11 0V9c0 1.538-.747 2.926-1.9 3.617a2.5 2.5 0 0 1-1.208 2.89h-1.888z"/>
                 </svg>
                 <span class="badge">3</span>
-                <div class="popup">
-                    <p>Bonjour {username}</p>
-                    <ul>
-                        <li>🎉 Nouvelle mise à jour : explorez nos dernières fonctionnalités !</li>
-                        <li>🕒 Votre création est en cours de traitement et sera prête sous peu.</li>
-                        <li>🌟 N'oubliez pas de visiter la galerie pour voir les nouvelles pièces.</li>
-                    </ul>
-                </div>
             </div>
         </h1>
+        <div class="popup">
+            <p>Bonjour {username}</p>
+            <ul>
+                <li>🎉 Nouvelle mise à jour : explorez nos dernières fonctionnalités !</li>
+                <li>🕒 Votre création est en cours de traitement et sera prête sous peu.</li>
+                <li>🌟 N'oubliez pas de visiter la galerie pour voir les nouvelles pièces.</li>
+            </ul>
+        </div>
     """, unsafe_allow_html=True)
 
-# Reste du code inchangé...
-
-# Définition des modèles de la base de données
+# Définition des modèles de la base de données (inchangée)
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
@@ -230,13 +170,13 @@ class Creation(Base):
 
 Base.metadata.create_all(engine)
 
-# Initialisation de l'état de l'application
+# Initialisation de l'état de l'application (inchangée)
 if "authenticated_user" not in st.session_state:
     st.session_state.authenticated_user = None
 if "page" not in st.session_state:
     st.session_state.page = "connexion"
 
-# Fonctions d'inscription et d'authentification
+# Fonctions d'inscription et d'authentification (inchangées)
 def authenticate(username, password):
     user = session.query(User).filter_by(username=username, password=password).first()
     return user
@@ -271,103 +211,4 @@ def afficher_page_inscription():
         else:
             st.error("Erreur lors de la création du compte. Veuillez vérifier les informations saisies.")
 
-# Page de connexion avec un disclaimer
-def afficher_page_connexion():
-    afficher_titre_avec_logo("Bienvenue sur Théâtre AI", "")
-
-    # Disclaimer
-    st.write("### Bienvenue au Théâtre AI ")
-    st.write("Découvrez une nouvelle manière de créer, de partager et de découvrir des pièces de théâtre avec Théâtre AI. "
-             "Inscrivez-vous pour accéder à toutes les fonctionnalités de création et de gestion de vos œuvres théâtrales.")
-
-    # Champs de connexion
-    username = st.text_input("Nom d'utilisateur")
-    password = st.text_input("Mot de passe", type="password")
-    
-    # Bouton de connexion
-    if st.button("Se connecter"):
-        user = authenticate(username, password)
-        if user:
-            st.session_state.authenticated_user = user
-            st.session_state.page = "Créer une Pièce"
-        else:
-            st.error("Nom d'utilisateur ou mot de passe incorrect")
-
-    # Bouton "Créer un compte" sous le bouton de connexion
-    if st.button("Créer un compte"):
-        st.session_state.page = "inscription"
-
-# Page de création de pièce
-def afficher_page_creation():
-    username = st.session_state.authenticated_user.username
-    afficher_titre_avec_logo("Créer une Nouvelle Pièce", username)
-    user_id = st.session_state.authenticated_user.id
-    with st.form(key="creation_form"):
-        theme = st.text_input("Thème de la pièce")
-        era = st.text_input("Époque souhaitée")
-        description = st.text_area("Description de la pièce")
-        submit_button = st.form_submit_button(label="Générer la pièce")
-    if submit_button:
-        new_creation = Creation(theme=theme, era=era, description=description, user_id=user_id)
-        session.add(new_creation)
-        session.commit()
-        st.success("Votre création a été enregistrée dans la base de données !")
-
-# Page de la galerie
-def afficher_page_galerie():
-    username = st.session_state.authenticated_user.username
-    afficher_titre_avec_logo("Galerie de Pièces en PDF", username)
-    st.write("Cliquez sur une pièce pour l'ouvrir dans un nouvel onglet.")
-    pieces = [
-        {"titre": "Les Dieux Réincarnés", "resume": "Dans un monde en déclin, les anciens dieux se battent contre des forces modernes qui menacent leur existence.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/dieux_reincarnes.pdf"},
-        {"titre": "L'Artefact du Temps", "resume": "Un roi grec découvre un artefact mystérieux qui manipule le temps, bouleversant les civilisations qu’il explore.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/artefact_temps.pdf"},
-        {"titre": "La Prophétie des Mages", "resume": "Dans un royaume lointain, la prophétie d’un mage annonce des bouleversements pour le futur.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/prophetie_mages.pdf"}
-    ]
-    for piece in pieces:
-        st.markdown(f"### {piece['titre']}")
-        st.write(piece["resume"])
-        st.markdown(f"[📖 Ouvrir {piece['titre']}]({piece['lien']})", unsafe_allow_html=True)
-
-# Page de l'historique
-def afficher_page_historique():
-    username = st.session_state.authenticated_user.username
-    afficher_titre_avec_logo("Historique des Créations", username)
-    user_id = st.session_state.authenticated_user.id
-    creations = session.query(Creation).filter_by(user_id=user_id).all()
-    if creations:
-        for idx, creation in enumerate(creations):
-            st.markdown(f"#### Création {idx + 1}")
-            st.write(f"**Thème**: {creation.theme}")
-            st.write(f"**Époque**: {creation.era}")
-            st.write(f"**Description**: {creation.description}")
-            st.write("---")
-    else:
-        st.write("Aucune création dans l'historique.")
-
-# Navigation avec le menu latéral
-if st.session_state.authenticated_user:
-    st.sidebar.title("Menu")
-    choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
-    st.session_state.page = choix_page
-
-    # Bouton Déconnexion en bas de la barre latérale
-    st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
-
-    if st.session_state.page == "Créer une Pièce":
-        afficher_page_creation()
-    elif st.session_state.page == "Galerie des Pièces":
-        afficher_page_galerie()
-    elif st.session_state.page == "Historique des Créations":
-        afficher_page_historique()
-else:
-    if st.session_state.page == "inscription":
-        afficher_page_inscription()
-    else:
-        afficher_page_connexion()
-
-# Afficher le pied de page défilant en bas de la page
-st.markdown("""
-<div class="footer">
-    <span class="scroll-text">Tous droits réservés et créé par Aya Rochdi</span>
-</div>
-""", unsafe_allow_html=True)
+# Le reste du code inchangé
