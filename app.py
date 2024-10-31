@@ -188,7 +188,7 @@ def afficher_page_connexion():
     afficher_titre_avec_logo("Bienvenue sur Théâtre AI")
 
     # Disclaimer
-    st.write("### Bienvenue au Théâtre AI 🎭")
+    st.write("### Bienvenue au Théâtre AI ")
     st.write("Découvrez une nouvelle manière de créer, de partager et de découvrir des pièces de théâtre avec Théâtre AI. "
              "Inscrivez-vous pour accéder à toutes les fonctionnalités de création et de gestion de vos œuvres théâtrales.")
 
