@@ -167,28 +167,31 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 # Fonction pour afficher un titre avec logo et icône de notification
-def afficher_titre_avec_logo(titre, username):
+def afficher_titre_avec_logo(titre, username=None):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
     
     col1, col2 = st.columns([8, 1])
     with col1:
         st.markdown(f"<h1 class='gradient-title'>{titre} <img src='data:image/jpg;base64,{logo_base64}' alt='logo' class='title-logo'/></h1>", unsafe_allow_html=True)
-    with col2:
-        if st.button("🔔", key="notif-button", on_click=toggle_notifications):
-            pass  # bouton pour afficher/masquer les notifications
+    
+    # Afficher la cloche uniquement si l'utilisateur est connecté et pas sur la page de création de compte
+    if username and st.session_state.page not in ["connexion", "inscription"]:
+        with col2:
+            if st.button("🔔", key="notif-button", on_click=toggle_notifications):
+                pass  # bouton pour afficher/masquer les notifications
 
-    # Afficher les notifications si l'état est activé
-    if st.session_state.show_notifications:
-        st.markdown(f"""
-            <div class="popup">
-                <p>Bonjour {username}</p>
-                <ul>
-                    <li>🎉 Nouvelle mise à jour : explorez nos dernières fonctionnalités !</li>
-                    <li>🕒 Votre création est en cours de traitement et sera prête sous peu.</li>
-                    <li>🌟 N'oubliez pas de visiter la galerie pour voir les nouvelles pièces.</li>
-                </ul>
-            </div>
-        """, unsafe_allow_html=True)
+        # Afficher les notifications si l'état est activé
+        if st.session_state.show_notifications:
+            st.markdown(f"""
+                <div class="popup">
+                    <p>Bonjour {username}</p>
+                    <ul>
+                        <li>🎉 Nouvelle mise à jour : explorez nos dernières fonctionnalités !</li>
+                        <li>🕒 Votre création est en cours de traitement et sera prête sous peu.</li>
+                        <li>🌟 N'oubliez pas de visiter la galerie pour voir les nouvelles pièces.</li>
+                    </ul>
+                </div>
+            """, unsafe_allow_html=True)
 
 # Définition des modèles de la base de données
 class User(Base):
@@ -240,7 +243,7 @@ def signup(username, password, email, first_name, last_name, phone):
 
 # Page d'inscription
 def afficher_page_inscription():
-    afficher_titre_avec_logo("Créer un Compte", "")
+    afficher_titre_avec_logo("Créer un Compte")
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
     email = st.text_input("Adresse e-mail")
@@ -256,9 +259,7 @@ def afficher_page_inscription():
 
 # Page de connexion avec un disclaimer
 def afficher_page_connexion():
-    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown(f"<h1 class='gradient-title'>Bienvenue sur Théâtre AI</h1>", unsafe_allow_html=True)
-    
+    afficher_titre_avec_logo("Bienvenue sur Théâtre AI")
     st.write("### Bienvenue au Théâtre AI ")
     st.write("Découvrez une nouvelle manière de créer, de partager et de découvrir des pièces de théâtre avec Théâtre AI. "
              "Inscrivez-vous pour accéder à toutes les fonctionnalités de création et de gestion de vos œuvres théâtrales.")
