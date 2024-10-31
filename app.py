@@ -151,8 +151,10 @@ def afficher_page_inscription():
 
 # Page de connexion
 def afficher_page_connexion():
-    st.markdown("<h1>Connexion</h1>", unsafe_allow_html=True)
-    
+    # Barre de dégradé animée et titre
+    st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
+    st.markdown("<h1>Bienvenue sur Théâtre AI</h1>", unsafe_allow_html=True)
+
     # Champs de connexion
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
