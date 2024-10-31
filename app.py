@@ -25,7 +25,7 @@ def get_base64_image():
 
 logo_base64 = get_base64_image()
 
-# CSS pour le style personnalisé, incluant la barre animée, titre dégradé, pied de page, et menu responsive
+# CSS pour le style personnalisé
 st.markdown(f"""
     <style>
     /* Barre de titre avec dégradé rose animé */
@@ -45,7 +45,7 @@ st.markdown(f"""
         100% {{ background-position: 0% 50%; }}
     }}
 
-    /* Style pour le titre avec dégradé animé dynamique et logo intégré */
+    /* Style pour le titre avec dégradé animé dynamique */
     .gradient-title {{
         font-size: 2em;
         font-weight: bold;
@@ -61,10 +61,10 @@ st.markdown(f"""
         justify-content: center;
     }}
     
-    .gradient-title img {{
+    .title-logo {{
         width: 30px;
         height: auto;
-        margin-right: 10px;
+        margin-left: 10px;
     }}
 
     @keyframes dynamic-gradient {{
@@ -113,12 +113,12 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# Fonction pour afficher un titre avec logo animé
+# Fonction pour afficher un titre avec logo après le texte
 def afficher_titre_avec_logo(titre):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
     st.markdown(f"""
         <h1 class='gradient-title'>
-            <img src='data:image/jpg;base64,{logo_base64}' alt='logo'/> {titre}
+            {titre} <img src='data:image/jpg;base64,{logo_base64}' alt='logo' class='title-logo'/>
         </h1>
     """, unsafe_allow_html=True)
 
@@ -186,9 +186,15 @@ def afficher_page_inscription():
         else:
             st.error("Erreur lors de la création du compte. Veuillez vérifier les informations saisies.")
 
-# Page de connexion
+# Page de connexion avec un disclaimer
 def afficher_page_connexion():
     afficher_titre_avec_logo("Bienvenue sur Théâtre AI")
+
+    # Disclaimer
+    st.write("### Bienvenue au Théâtre AI 🎭")
+    st.write("Découvrez une nouvelle manière de créer, de partager et de découvrir des pièces de théâtre avec Théâtre AI. "
+             "Inscrivez-vous pour accéder à toutes les fonctionnalités de création et de gestion de vos œuvres théâtrales.")
+
     # Champs de connexion
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
