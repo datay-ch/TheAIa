@@ -46,15 +46,21 @@ st.markdown("""
         color: white;
     }
 
-    /* Style pour les images du menu */
-    .menu-logo {
+    /* Style pour l'icône de logo au centre de la page */
+    .logo-icon {
         display: block;
         margin-left: auto;
         margin-right: auto;
-        width: 150px; /* Taille réduite pour le logo */
+        width: 100px; /* Taille réduite pour l'icône */
     }
     </style>
     """, unsafe_allow_html=True)
+
+# Afficher l'icône en haut de chaque page si l'utilisateur est connecté
+def afficher_logo():
+    logo_path = "logosaas.jpg"
+    if os.path.exists(logo_path):
+        st.image(logo_path, width=100, caption="Théâtre AI", use_column_width=False)  # Taille réduite pour l'icône
 
 # Barre de titre avec dégradé rose
 st.markdown("<div class='header-bar'>Bienvenue au Théâtre AI</div>", unsafe_allow_html=True)
@@ -190,11 +196,7 @@ def afficher_page_historique():
 
 # Navigation avec le menu et affichage des pages
 if st.session_state.authenticated_user:
-    # Afficher le logo dans le menu latéral si l'utilisateur est connecté
-    logo_path = "logosaas.jpg"
-    if os.path.exists(logo_path):
-        st.sidebar.image(logo_path, width=150, caption="Théâtre AI")  # Taille réduite du logo
-
+    afficher_logo()  # Afficher le logo en haut de la page si l'utilisateur est connecté
     st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
     st.sidebar.title("Menu")
     choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
