@@ -118,31 +118,17 @@ st.markdown(f"""
         position: relative;
         display: inline-block;
         cursor: pointer;
-        font-size: 1.2em;
+        font-size: 1.1em;
         color: #ff5f6d;
-        margin-left: 15px;
-    }}
-
-    .notification:hover {{
-        animation: ring 0.5s linear;
-    }}
-
-    @keyframes ring {{
-        0% {{ transform: rotate(0deg); }}
-        15% {{ transform: rotate(-15deg); }}
-        30% {{ transform: rotate(15deg); }}
-        45% {{ transform: rotate(-10deg); }}
-        60% {{ transform: rotate(10deg); }}
-        75% {{ transform: rotate(-5deg); }}
-        100% {{ transform: rotate(0deg); }}
+        margin-left: 10px;
     }}
 
     /* Badge de notification */
     .notification .badge {{
         position: absolute;
-        top: -10px;
-        right: -10px;
-        padding: 5px 10px;
+        top: -8px;
+        right: -8px;
+        padding: 2px 6px;
         border-radius: 50%;
         background-color: #ff5f6d;
         color: white;
@@ -153,17 +139,31 @@ st.markdown(f"""
     .popup {{
         display: none;
         position: absolute;
-        top: 40px;
-        right: 10px;
+        top: 30px;
+        right: -10px;
         width: 250px;
-        padding: 15px;
-        background-color: white;
-        border-radius: 5px;
+        padding: 10px;
+        background-color: #333;
+        border-radius: 8px;
+        color: white;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         z-index: 1;
-        text-align: left;
+    }}
+    .popup p {{
+        margin: 0;
+        font-size: 0.9em;
+    }}
+    .popup ul {{
+        list-style-type: none;
+        padding: 0;
+        margin: 10px 0;
+    }}
+    .popup ul li {{
+        font-size: 0.85em;
+        margin-bottom: 5px;
     }}
 
+    /* Afficher la popup lors du survol de la cloche */
     .notification:hover .popup {{
         display: block;
     }}
