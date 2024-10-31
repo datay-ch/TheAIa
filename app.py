@@ -49,9 +49,19 @@ st.markdown("""
 
     /* Style pour l'icône de logo */
     .title-icon {
-        width: 25px; /* Taille très réduite de l'icône */
+        width: 20px; /* Taille très réduite de l'icône */
         vertical-align: middle;
         margin-right: 8px;
+    }
+
+    /* Déplacer le bouton Déconnexion en bas */
+    .sidebar .sidebar-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .logout-button {
+        margin-top: auto;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -197,10 +207,14 @@ def afficher_page_historique():
 
 # Navigation avec le menu et affichage des pages
 if st.session_state.authenticated_user:
-    st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
     st.sidebar.title("Menu")
     choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
     st.session_state.page = choix_page
+
+    # Bouton Déconnexion en bas de la barre latérale
+    st.sidebar.markdown("<div class='logout-button'>", unsafe_allow_html=True)
+    st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
     if st.session_state.page == "Créer une Pièce":
         afficher_page_creation()
