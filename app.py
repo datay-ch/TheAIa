@@ -141,7 +141,7 @@ st.markdown(f"""
         font-weight: bold;
     }}
 
-    /* Popup de notification avec fond semi-transparent */
+    /* Popup de notification avec fond transparent */
     .popup {{
         display: none;
         position: absolute;
@@ -149,7 +149,7 @@ st.markdown(f"""
         right: -10px;
         width: 280px;
         padding: 15px;
-        background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
+        background-color: rgba(255, 255, 255, 0); /* Fond transparent */
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         color: white;
@@ -165,14 +165,19 @@ st.markdown(f"""
     .popup p {{
         font-weight: bold;
         margin-top: 0;
+        color: #ff5f6d;
     }}
     .popup ul {{
         list-style: none;
         padding: 0;
+        color: #fff;
     }}
     .popup ul li {{
         padding: 8px 0;
         border-bottom: 1px solid #666;
+    }}
+    .popup ul li:last-child {{
+        border-bottom: none;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -191,14 +196,16 @@ def afficher_titre_avec_logo(titre, username):
                 <div class="popup">
                     <p>Bonjour {username}</p>
                     <ul>
-                        <li>Votre création est en cours de traitement.</li>
-                        <li>Nouveautés : Découvrez les nouvelles fonctionnalités !</li>
-                        <li>Notification : Votre pièce sera disponible dans la galerie sous peu.</li>
+                        <li>🎉 Nouvelle mise à jour : explorez nos dernières fonctionnalités !</li>
+                        <li>🕒 Votre création est en cours de traitement et sera prête sous peu.</li>
+                        <li>🌟 N'oubliez pas de visiter la galerie pour voir les nouvelles pièces.</li>
                     </ul>
                 </div>
             </div>
         </h1>
     """, unsafe_allow_html=True)
+
+# Reste du code inchangé...
 
 # Définition des modèles de la base de données
 class User(Base):
