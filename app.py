@@ -113,59 +113,66 @@ st.markdown(f"""
         border: none;
     }}
 
-    /* Style et animation pour la cloche de notification */
+    /* Cloche de notification stylisée */
     .notification {{
         position: relative;
         display: inline-block;
         cursor: pointer;
         font-size: 1.1em;
+        margin-left: 15px;
         color: #ff5f6d;
-        margin-left: 10px;
+        transition: transform 0.3s ease;
+    }}
+
+    .notification:hover {{
+        transform: scale(1.1);
     }}
 
     /* Badge de notification */
     .notification .badge {{
         position: absolute;
-        top: -8px;
-        right: -8px;
-        padding: 2px 6px;
+        top: -5px;
+        right: -5px;
+        padding: 5px;
         border-radius: 50%;
         background-color: #ff5f6d;
         color: white;
         font-size: 0.7em;
+        font-weight: bold;
     }}
 
-    /* Popup de notification */
+    /* Popup de notification stylisé */
     .popup {{
         display: none;
         position: absolute;
-        top: 30px;
+        top: 35px;
         right: -10px;
-        width: 250px;
-        padding: 10px;
-        background-color: #333;
+        width: 280px;
+        padding: 15px;
+        background-color: #444;
         border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         color: white;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }}
-    .popup p {{
-        margin: 0;
         font-size: 0.9em;
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.4s;
     }}
-    .popup ul {{
-        list-style-type: none;
-        padding: 0;
-        margin: 10px 0;
-    }}
-    .popup ul li {{
-        font-size: 0.85em;
-        margin-bottom: 5px;
-    }}
-
-    /* Afficher la popup lors du survol de la cloche */
     .notification:hover .popup {{
         display: block;
+        opacity: 1;
+    }}
+    .popup p {{
+        font-weight: bold;
+        margin-top: 0;
+    }}
+    .popup ul {{
+        list-style: none;
+        padding: 0;
+    }}
+    .popup ul li {{
+        padding: 8px 0;
+        border-bottom: 1px solid #666;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -177,10 +184,12 @@ def afficher_titre_avec_logo(titre, username):
         <h1 class='gradient-title'>
             {titre} <img src='data:image/jpg;base64,{logo_base64}' alt='logo' class='title-logo'/>
             <div class="notification" title="Notifications">
-                &#128276;
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                    <path d="M8 16a2 2 0 0 0 1.985-1.75H6.016A2 2 0 0 0 8 16zm.104-1.793a2.5 2.5 0 0 1-1.208-2.89A6.002 6.002 0 0 1 2 9V6.5a5.5 5.5 0 1 1 11 0V9c0 1.538-.747 2.926-1.9 3.617a2.5 2.5 0 0 1-1.208 2.89h-1.888z"/>
+                </svg>
                 <span class="badge">3</span>
                 <div class="popup">
-                    <p><strong>Bonjour {username}</strong></p>
+                    <p>Bonjour {username}</p>
                     <ul>
                         <li>Votre création est en cours. Disponible sous 48h.</li>
                         <li>Nouveauté : découvrez les mises à jour !</li>
