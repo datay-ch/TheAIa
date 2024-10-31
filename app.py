@@ -39,85 +39,57 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
-    @keyframes gradient-animation {{
-        0% {{ background-position: 0% 50%; }}
-        50% {{ background-position: 100% 50%; }}
-        100% {{ background-position: 0% 50%; }}
+    /* Suppression des bordures des boutons */
+    button {{
+        border: none;
     }}
 
-    /* Style pour le titre avec dégradé animé dynamique */
-    .gradient-title {{
-        font-size: 2em;
-        font-weight: bold;
-        text-align: center;
-        background: linear-gradient(270deg, #ff5f6d, #ffc371, #ff5f6d);
-        background-size: 400% 400%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: dynamic-gradient 6s ease infinite;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }}
-    
-    .title-logo {{
-        width: 30px;
-        height: auto;
-        margin-left: 10px;
-    }}
-
-    @keyframes dynamic-gradient {{
-        0% {{ background-position: 0% 50%; }}
-        50% {{ background-position: 100% 50%; }}
-        100% {{ background-position: 0% 50%; }}
-    }}
-
-    /* Style pour le texte défilant en bas */
-    .footer {{
-        width: 100%;
-        position: fixed;
-        bottom: 0;
-        text-align: center;
-        font-size: 14px;
-        overflow: hidden;
-    }}
-    .scroll-text {{
+    /* Notification cloche */
+    .notification {{
         display: inline-block;
-        background: linear-gradient(90deg, #ff5f6d, #ffc371, #ff5f6d);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: scroll 10s linear infinite, gradient-animation 3s ease infinite;
-        white-space: nowrap;
-        font-weight: bold;
-    }}
-    
-    @keyframes scroll {{
-        0% {{ transform: translateX(100%); }}
-        100% {{ transform: translateX(-100%); }}
+        cursor: pointer;
+        font-size: 1.5em;
+        margin-left: 15px;
+        color: #ff5f6d;
     }}
 
-    /* Responsivité pour mobile */
-    @media (max-width: 768px) {{
-        .gradient-title {{
-            font-size: 1.5em;
-        }}
-        .footer {{
-            font-size: 12px;
-        }}
+    /* Animation de la cloche */
+    @keyframes ring {{
+        0% {{ transform: rotate(0deg); }}
+        15% {{ transform: rotate(-15deg); }}
+        30% {{ transform: rotate(15deg); }}
+        45% {{ transform: rotate(-10deg); }}
+        60% {{ transform: rotate(10deg); }}
+        75% {{ transform: rotate(-5deg); }}
+        100% {{ transform: rotate(0deg); }}
+    }}
+
+    .notification:hover {{
+        animation: ring 0.5s linear;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# Fonction pour afficher un titre avec logo après le texte
-def afficher_titre_avec_logo(titre):
+# Fonction pour afficher un titre avec logo, notification personnalisée
+def afficher_titre_avec_logo(titre, username):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
     st.markdown(f"""
         <h1 class='gradient-title'>
             {titre} <img src='data:image/jpg;base64,{logo_base64}' alt='logo' class='title-logo'/>
+            <span class="notification" title="Salut {username}, vous avez des notifications">&#128276;</span>
         </h1>
     """, unsafe_allow_html=True)
+    afficher_notifications(username)
+
+# Fonction pour afficher des notifications personnalisées
+def afficher_notifications(username):
+    notifications = [
+        f"Bonjour {username}, votre création est encore en cours et sera disponible sous 48h.",
+        f"{username}, il y a une nouvelle mise à jour de l'application ! Découvrez les nouvelles fonctionnalités.",
+        f"Restez connecté, {username} ! Plus de notifications arriveront bientôt."
+    ]
+    for notification in notifications:
+        st.info(notification)
 
 # Définition des modèles de la base de données
 class User(Base):
@@ -169,7 +141,7 @@ def signup(username, password, email, first_name, last_name, phone):
 
 # Page d'inscription
 def afficher_page_inscription():
-    afficher_titre_avec_logo("Créer un Compte")
+    afficher_titre_avec_logo("Créer un Compte", "")
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
     email = st.text_input("Adresse e-mail")
@@ -185,9 +157,7 @@ def afficher_page_inscription():
 
 # Page de connexion avec un disclaimer
 def afficher_page_connexion():
-    afficher_titre_avec_logo("Bienvenue sur Théâtre AI")
-
-    # Disclaimer
+    afficher_titre_avec_logo("Bienvenue sur Théâtre AI", "")
     st.write("### Bienvenue au Théâtre AI ")
     st.write("Découvrez une nouvelle manière de créer, de partager et de découvrir des pièces de théâtre avec Théâtre AI. "
              "Inscrivez-vous pour accéder à toutes les fonctionnalités de création et de gestion de vos œuvres théâtrales.")
@@ -211,7 +181,8 @@ def afficher_page_connexion():
 
 # Page de création de pièce
 def afficher_page_creation():
-    afficher_titre_avec_logo("Créer une Nouvelle Pièce")
+    username = st.session_state.authenticated_user.username
+    afficher_titre_avec_logo("Créer une Nouvelle Pièce", username)
     user_id = st.session_state.authenticated_user.id
     with st.form(key="creation_form"):
         theme = st.text_input("Thème de la pièce")
@@ -226,7 +197,8 @@ def afficher_page_creation():
 
 # Page de la galerie
 def afficher_page_galerie():
-    afficher_titre_avec_logo("Galerie de Pièces en PDF")
+    username = st.session_state.authenticated_user.username
+    afficher_titre_avec_logo("Galerie de Pièces en PDF", username)
     st.write("Cliquez sur une pièce pour l'ouvrir dans un nouvel onglet.")
     pieces = [
         {"titre": "Les Dieux Réincarnés", "resume": "Dans un monde en déclin, les anciens dieux se battent contre des forces modernes qui menacent leur existence.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/dieux_reincarnes.pdf"},
@@ -240,7 +212,8 @@ def afficher_page_galerie():
 
 # Page de l'historique
 def afficher_page_historique():
-    afficher_titre_avec_logo("Historique des Créations")
+    username = st.session_state.authenticated_user.username
+    afficher_titre_avec_logo("Historique des Créations", username)
     user_id = st.session_state.authenticated_user.id
     creations = session.query(Creation).filter_by(user_id=user_id).all()
     if creations:
@@ -260,9 +233,7 @@ if st.session_state.authenticated_user:
     st.session_state.page = choix_page
 
     # Bouton Déconnexion en bas de la barre latérale
-    st.sidebar.markdown("<div class='logout-button'>", unsafe_allow_html=True)
     st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
     if st.session_state.page == "Créer une Pièce":
         afficher_page_creation()
