@@ -15,11 +15,21 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# CSS pour le style personnalisé, incluant la barre animée, titre dégradé, et pied de page
-st.markdown("""
+# Chargement de l'image en base64
+def get_base64_image():
+    logo_path = "logosaas.jpg"  # Assurez-vous que le logo est dans le même dossier que le script
+    if os.path.exists(logo_path):
+        with open(logo_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode()
+    return ""
+
+logo_base64 = get_base64_image()
+
+# CSS pour le style personnalisé, incluant la barre animée, titre dégradé, pied de page, et menu responsive
+st.markdown(f"""
     <style>
     /* Barre de titre avec dégradé rose animé */
-    .animated-bar {
+    .animated-bar {{
         width: 100%;
         height: 10px;
         background: linear-gradient(90deg, #ff5f6d, #ffc371);
@@ -27,28 +37,44 @@ st.markdown("""
         animation: gradient-animation 3s ease infinite;
         border-radius: 15px;
         margin-bottom: 20px;
-    }
+    }}
 
-    @keyframes gradient-animation {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
+    @keyframes gradient-animation {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
 
-    /* Style pour le titre avec dégradé animé */
-    .gradient-title {
+    /* Style pour le titre avec dégradé animé dynamique et logo intégré */
+    .gradient-title {{
         font-size: 2em;
         font-weight: bold;
         text-align: center;
-        background: linear-gradient(90deg, #ff5f6d, #ffc371, #ff5f6d);
+        background: linear-gradient(270deg, #ff5f6d, #ffc371, #ff5f6d);
+        background-size: 400% 400%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        animation: gradient-animation 3s ease infinite;
+        animation: dynamic-gradient 6s ease infinite;
         margin-bottom: 20px;
-    }
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }}
+    
+    .gradient-title img {{
+        width: 30px;
+        height: auto;
+        margin-right: 10px;
+    }}
+
+    @keyframes dynamic-gradient {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
 
     /* Style sans bordure pour les boutons */
-    .stButton>button {
+    .stButton>button {{
         color: #ff5f6d;
         background-color: transparent;
         border: none;
@@ -58,31 +84,14 @@ st.markdown("""
         cursor: pointer;
         transition: background-color 0.3s, color 0.3s;
         font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    .stButton>button:hover {
+    }}
+    .stButton>button:hover {{
         background-color: #ff5f6d;
         color: white;
-    }
-
-    /* Style pour l'icône de logo */
-    .title-icon {
-        width: 20px;
-        vertical-align: middle;
-        margin-right: 8px;
-    }
-
-    /* Déplacer le bouton Déconnexion en bas */
-    .sidebar .sidebar-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    .logout-button {
-        margin-top: auto;
-    }
+    }}
 
     /* Pied de page */
-    .footer {
+    .footer {{
         position: fixed;
         bottom: 0;
         width: 100%;
@@ -90,24 +99,43 @@ st.markdown("""
         padding: 10px 0;
         font-size: 14px;
         color: #888;
-    }
+    }}
 
-    /* Responsivité pour mobile */
-    @media (max-width: 768px) {
-        .gradient-title {
-            font-size: 1.5em;
-        }
-        .footer {
-            font-size: 12px;
-        }
-    }
+    /* Responsivité pour mobile : masquage du menu latéral et affichage d'un bouton */
+    @media (max-width: 768px) {{
+        .sidebar .sidebar-content {{
+            display: none;
+        }}
+        .menu-button {{
+            display: block;
+            background-color: #ff5f6d;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }}
+    }}
+
+    /* Masquage du bouton sur grand écran */
+    @media (min-width: 769px) {{
+        .menu-button {{
+            display: none;
+        }}
+    }}
     </style>
     """, unsafe_allow_html=True)
 
-# Fonction pour afficher un titre avec un logo animé
+# Fonction pour afficher un titre avec logo animé
 def afficher_titre_avec_logo(titre):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown(f"<h1 class='gradient-title'>{titre}</h1>", unsafe_allow_html=True)
+    st.markdown(f"""
+        <h1 class='gradient-title'>
+            <img src='data:image/jpg;base64,{logo_base64}' alt='logo'/> {titre}
+        </h1>
+    """, unsafe_allow_html=True)
 
 # Définition des modèles de la base de données
 class User(Base):
@@ -197,7 +225,7 @@ def afficher_page_connexion():
 
 # Page de création de pièce
 def afficher_page_creation():
-    afficher_titre_avec_logo("Créer une Nouvelle Pièce")  # Affiche le titre avec le logo comme icône
+    afficher_titre_avec_logo("Créer une Nouvelle Pièce")
     user_id = st.session_state.authenticated_user.id
     with st.form(key="creation_form"):
         theme = st.text_input("Thème de la pièce")
@@ -241,10 +269,10 @@ def afficher_page_historique():
     else:
         st.write("Aucune création dans l'historique.")
 
-# Navigation avec le menu et affichage des pages
+# Navigation avec le menu responsive
 if st.session_state.authenticated_user:
-    st.sidebar.title("Menu")
-    choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
+    st.markdown("<div class='menu-button'>Menu</div>", unsafe_allow_html=True)
+    choix_page = st.radio("Navigation", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"], index=0)
     st.session_state.page = choix_page
 
     # Bouton Déconnexion en bas de la barre latérale
