@@ -46,24 +46,22 @@ st.markdown("""
         color: white;
     }
 
-    /* Style pour l'icône de logo au centre de la page */
-    .logo-icon {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100px; /* Taille réduite pour l'icône */
+    /* Style pour l'icône de logo */
+    .title-icon {
+        width: 30px; /* Taille réduite de l'icône */
+        vertical-align: middle;
+        margin-right: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Afficher l'icône en haut de chaque page si l'utilisateur est connecté
-def afficher_logo():
+# Fonction pour afficher un titre avec une icône de logo
+def afficher_titre_avec_logo(titre):
     logo_path = "logosaas.jpg"
     if os.path.exists(logo_path):
-        st.image(logo_path, width=100, caption="Théâtre AI", use_column_width=False)  # Taille réduite pour l'icône
-
-# Barre de titre avec dégradé rose
-st.markdown("<div class='header-bar'>Bienvenue au Théâtre AI</div>", unsafe_allow_html=True)
+        st.markdown(f"<h1><img src='data:image/jpg;base64,{st.image(logo_path, use_column_width=False)}' class='title-icon' alt='logo'/> {titre}</h1>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<h1>{titre}</h1>", unsafe_allow_html=True)
 
 # Définition des modèles de la base de données
 class User(Base):
@@ -152,7 +150,7 @@ def afficher_page_connexion():
 
 # Page de création de pièce
 def afficher_page_creation():
-    st.markdown("<h1>Créer une Nouvelle Pièce 🎭</h1>", unsafe_allow_html=True)
+    afficher_titre_avec_logo("Créer une Nouvelle Pièce")  # Affiche le titre avec le logo comme icône
     user_id = st.session_state.authenticated_user.id
     with st.form(key="creation_form"):
         theme = st.text_input("Thème de la pièce")
@@ -196,7 +194,6 @@ def afficher_page_historique():
 
 # Navigation avec le menu et affichage des pages
 if st.session_state.authenticated_user:
-    afficher_logo()  # Afficher le logo en haut de la page si l'utilisateur est connecté
     st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
     st.sidebar.title("Menu")
     choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
