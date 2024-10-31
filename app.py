@@ -113,16 +113,20 @@ st.markdown(f"""
         border: none;
     }}
 
-    /* Notification cloche */
+    /* Style et animation pour la cloche de notification */
     .notification {{
+        position: relative;
         display: inline-block;
         cursor: pointer;
-        font-size: 1.5em;
-        margin-left: 15px;
+        font-size: 1.2em;
         color: #ff5f6d;
+        margin-left: 15px;
     }}
 
-    /* Animation de la cloche */
+    .notification:hover {{
+        animation: ring 0.5s linear;
+    }}
+
     @keyframes ring {{
         0% {{ transform: rotate(0deg); }}
         15% {{ transform: rotate(-15deg); }}
@@ -133,32 +137,59 @@ st.markdown(f"""
         100% {{ transform: rotate(0deg); }}
     }}
 
-    .notification:hover {{
-        animation: ring 0.5s linear;
+    /* Badge de notification */
+    .notification .badge {{
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        background-color: #ff5f6d;
+        color: white;
+        font-size: 0.7em;
+    }}
+
+    /* Popup de notification */
+    .popup {{
+        display: none;
+        position: absolute;
+        top: 40px;
+        right: 10px;
+        width: 250px;
+        padding: 15px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        text-align: left;
+    }}
+
+    .notification:hover .popup {{
+        display: block;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# Fonction pour afficher un titre avec logo, notification personnalisée
-def afficher_titre_avec_logo(titre, username=""):
+# Fonction pour afficher un titre avec logo et icône de notification
+def afficher_titre_avec_logo(titre, username):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
     st.markdown(f"""
         <h1 class='gradient-title'>
             {titre} <img src='data:image/jpg;base64,{logo_base64}' alt='logo' class='title-logo'/>
-            <span class="notification" title="Salut {username}, vous avez des notifications">&#128276;</span>
+            <div class="notification" title="Notifications">
+                &#128276;
+                <span class="badge">3</span>
+                <div class="popup">
+                    <p><strong>Bonjour {username}</strong></p>
+                    <ul>
+                        <li>Votre création est en cours. Disponible sous 48h.</li>
+                        <li>Nouveauté : découvrez les mises à jour !</li>
+                        <li>Restez connecté pour d'autres notifications.</li>
+                    </ul>
+                </div>
+            </div>
         </h1>
     """, unsafe_allow_html=True)
-    afficher_notifications(username)
-
-# Fonction pour afficher des notifications personnalisées
-def afficher_notifications(username):
-    notifications = [
-        f"Bonjour {username}, votre création est encore en cours et sera disponible sous 48h.",
-        f"{username}, il y a une nouvelle mise à jour de l'application ! Découvrez les nouvelles fonctionnalités.",
-        f"Restez connecté, {username} ! Plus de notifications arriveront bientôt."
-    ]
-    for notification in notifications:
-        st.info(notification)
 
 # Définition des modèles de la base de données
 class User(Base):
@@ -210,7 +241,7 @@ def signup(username, password, email, first_name, last_name, phone):
 
 # Page d'inscription
 def afficher_page_inscription():
-    afficher_titre_avec_logo("Créer un Compte")
+    afficher_titre_avec_logo("Créer un Compte", "")
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
     email = st.text_input("Adresse e-mail")
@@ -226,7 +257,7 @@ def afficher_page_inscription():
 
 # Page de connexion avec un disclaimer
 def afficher_page_connexion():
-    afficher_titre_avec_logo("Bienvenue sur Théâtre AI")
+    afficher_titre_avec_logo("Bienvenue sur Théâtre AI", "")
 
     # Disclaimer
     st.write("### Bienvenue au Théâtre AI ")
