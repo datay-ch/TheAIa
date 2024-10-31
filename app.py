@@ -48,7 +48,7 @@ st.markdown("""
 
     /* Style pour l'icône de logo */
     .title-icon {
-        width: 30px; /* Taille réduite de l'icône */
+        width: 5px; /* Taille réduite de l'icône */
         vertical-align: middle;
         margin-right: 10px;
     }
