@@ -51,18 +51,13 @@ st.markdown("""
         display: block;
         margin-left: auto;
         margin-right: auto;
-        width: 50%;
+        width: 150px; /* Taille réduite pour le logo */
     }
     </style>
     """, unsafe_allow_html=True)
 
 # Barre de titre avec dégradé rose
 st.markdown("<div class='header-bar'>Bienvenue au Théâtre AI</div>", unsafe_allow_html=True)
-
-# Charger et afficher le logo dans la barre latérale
-logo_path = "logosaas.jpg"
-if os.path.exists(logo_path):
-    st.sidebar.image(logo_path, width=200, caption="Théâtre AI")
 
 # Définition des modèles de la base de données
 class User(Base):
@@ -195,6 +190,11 @@ def afficher_page_historique():
 
 # Navigation avec le menu et affichage des pages
 if st.session_state.authenticated_user:
+    # Afficher le logo dans le menu latéral si l'utilisateur est connecté
+    logo_path = "logosaas.jpg"
+    if os.path.exists(logo_path):
+        st.sidebar.image(logo_path, width=150, caption="Théâtre AI")  # Taille réduite du logo
+
     st.sidebar.button("Déconnexion", key="logout", on_click=lambda: st.session_state.update(authenticated_user=None, page="connexion"))
     st.sidebar.title("Menu")
     choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
