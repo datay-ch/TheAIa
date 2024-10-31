@@ -15,7 +15,7 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# CSS pour le style personnalisé, incluant la barre animée
+# CSS pour le style personnalisé, incluant la barre animée, titre dégradé, et pied de page
 st.markdown("""
     <style>
     /* Barre de titre avec dégradé rose animé */
@@ -33,6 +33,18 @@ st.markdown("""
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
+    }
+
+    /* Style pour le titre avec dégradé animé */
+    .gradient-title {
+        font-size: 2em;
+        font-weight: bold;
+        text-align: center;
+        background: linear-gradient(90deg, #ff5f6d, #ffc371, #ff5f6d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradient-animation 3s ease infinite;
+        margin-bottom: 20px;
     }
 
     /* Style sans bordure pour les boutons */
@@ -54,7 +66,7 @@ st.markdown("""
 
     /* Style pour l'icône de logo */
     .title-icon {
-        width: 20px; /* Taille très réduite de l'icône */
+        width: 20px;
         vertical-align: middle;
         margin-right: 8px;
     }
@@ -68,22 +80,34 @@ st.markdown("""
     .logout-button {
         margin-top: auto;
     }
+
+    /* Pied de page */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 14px;
+        color: #888;
+    }
+
+    /* Responsivité pour mobile */
+    @media (max-width: 768px) {
+        .gradient-title {
+            font-size: 1.5em;
+        }
+        .footer {
+            font-size: 12px;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# Fonction pour afficher un titre avec une icône de logo
+# Fonction pour afficher un titre avec un logo animé
 def afficher_titre_avec_logo(titre):
-    # Barre de dégradé animée
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-
-    # Affichage du titre avec l'icône de logo
-    logo_path = "logosaas.jpg"
-    if os.path.exists(logo_path):
-        with open(logo_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode()
-        st.markdown(f"<h1><img src='data:image/jpg;base64,{encoded_string}' class='title-icon' alt='logo'/> {titre}</h1>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<h1>{titre}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h1 class='gradient-title'>{titre}</h1>", unsafe_allow_html=True)
 
 # Définition des modèles de la base de données
 class User(Base):
@@ -135,7 +159,7 @@ def signup(username, password, email, first_name, last_name, phone):
 
 # Page d'inscription
 def afficher_page_inscription():
-    st.markdown("<h1>Créer un Compte</h1>", unsafe_allow_html=True)
+    afficher_titre_avec_logo("Créer un Compte")
     username = st.text_input("Nom d'utilisateur")
     password = st.text_input("Mot de passe", type="password")
     email = st.text_input("Adresse e-mail")
@@ -151,9 +175,8 @@ def afficher_page_inscription():
 
 # Page de connexion
 def afficher_page_connexion():
-    # Barre de dégradé animée et titre
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown("<h1>Bienvenue sur Théâtre AI</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='gradient-title'>Bienvenue sur Théâtre AI</h1>", unsafe_allow_html=True)
 
     # Champs de connexion
     username = st.text_input("Nom d'utilisateur")
@@ -190,7 +213,7 @@ def afficher_page_creation():
 # Page de la galerie
 def afficher_page_galerie():
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown("<h1>Galerie de Pièces en PDF 🎭</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='gradient-title'>Galerie de Pièces en PDF</h1>", unsafe_allow_html=True)
     st.write("Cliquez sur une pièce pour l'ouvrir dans un nouvel onglet.")
     pieces = [
         {"titre": "Les Dieux Réincarnés", "resume": "Dans un monde en déclin, les anciens dieux se battent contre des forces modernes qui menacent leur existence.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/dieux_reincarnes.pdf"},
@@ -205,7 +228,7 @@ def afficher_page_galerie():
 # Page de l'historique
 def afficher_page_historique():
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-    st.markdown("<h1>Historique des Créations</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='gradient-title'>Historique des Créations</h1>", unsafe_allow_html=True)
     user_id = st.session_state.authenticated_user.id
     creations = session.query(Creation).filter_by(user_id=user_id).all()
     if creations:
@@ -240,3 +263,6 @@ else:
         afficher_page_inscription()
     else:
         afficher_page_connexion()
+
+# Afficher le pied de page en bas de la page
+st.markdown("<div class='footer'>Tous droits réservés et créé par Aya Rochdi</div>", unsafe_allow_html=True)
