@@ -75,6 +75,47 @@ st.markdown(f"""
         margin-left: 10px;
     }}
 
+    @keyframes dynamic-gradient {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
+
+    /* Style pour le texte défilant en bas */
+    .footer {{
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        text-align: center;
+        font-size: 14px;
+        overflow: hidden;
+    }}
+    .scroll-text {{
+        display: inline-block;
+        background: linear-gradient(90deg, #ff5f6d, #ffc371, #ff5f6d);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: scroll 10s linear infinite, gradient-animation 3s ease infinite;
+        white-space: nowrap;
+        font-weight: bold;
+    }}
+    
+    @keyframes scroll {{
+        0% {{ transform: translateX(100%); }}
+        100% {{ transform: translateX(-100%); }}
+    }}
+
+    /* Responsivité pour mobile */
+    @media (max-width: 768px) {{
+        .gradient-title {{
+            font-size: 1.5em;
+        }}
+        .footer {{
+            font-size: 12px;
+        }}
+    }}
+
     /* Cloche de notification stylisée */
     .notification {{
         position: relative;
@@ -100,22 +141,26 @@ st.markdown(f"""
 
     /* Popup de notification */
     .popup {{
-        position: relative;
+        position: fixed;
+        top: 70px;
+        right: 20px;
         width: 300px;
         padding: 15px;
-        background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
+        background-color: rgba(0, 0, 0, 0.9); /* Fond semi-transparent */
         border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         color: white;
         font-size: 0.9em;
+        z-index: 1000;
     }}
     .popup p {{
         font-weight: bold;
         color: #ff5f6d;
+        margin-top: 0;
     }}
     .popup ul {{
         list-style: none;
         padding: 0;
-        color: #fff;
     }}
     .popup ul li {{
         padding: 8px 0;
@@ -130,8 +175,7 @@ st.markdown(f"""
 # Fonction pour afficher un titre avec logo et icône de notification
 def afficher_titre_avec_logo(titre, username):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
-
-    # Afficher la cloche de notification
+    
     col1, col2 = st.columns([8, 1])
     with col1:
         st.markdown(f"<h1 class='gradient-title'>{titre} <img src='data:image/jpg;base64,{logo_base64}' alt='logo' class='title-logo'/></h1>", unsafe_allow_html=True)
