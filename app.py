@@ -2,7 +2,7 @@ import streamlit as st
 from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-
+import os
 
 # Configuration de la page
 st.set_page_config(page_title="Théâtre AI", page_icon="🎭", layout="centered")
@@ -14,7 +14,70 @@ engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Définir les modèles de la base de données
+# CSS pour le style personnalisé
+st.markdown("""
+    <style>
+    /* Barre de titre avec dégradé rose */
+    .header-bar {
+        background: linear-gradient(to right, #ff5f6d, #ffc371);
+        padding: 10px;
+        text-align: center;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        border-radius: 15px;
+        margin-bottom: 15px;
+        position: relative;
+    }
+    
+    /* Icône de déconnexion en haut à droite sans bordure */
+    .logout-icon {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        background: none;
+        border: none;
+    }
+    
+    /* Boutons ajustés (même taille) */
+    .stButton>button {
+        color: #ff5f6d;
+        border: 2px solid #ff5f6d;
+        background-color: transparent;
+        border-radius: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .stButton>button:hover {
+        background-color: #ff5f6d;
+        color: white;
+    }
+
+    /* Style pour les images du menu */
+    .menu-logo {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# Barre de titre avec dégradé rose
+st.markdown("<div class='header-bar'>Bienvenue au Théâtre AI</div>", unsafe_allow_html=True)
+
+# Charger et afficher le logo dans la barre latérale
+logo_path = "/mnt/data/logosaas.jpg"
+if os.path.exists(logo_path):
+    st.sidebar.image(logo_path, width=200, caption="Théâtre AI")
+
+# Définition des modèles de la base de données
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
@@ -62,93 +125,9 @@ def signup(username, password, email, first_name, last_name, phone):
     session.commit()
     return True
 
-# CSS pour le style personnalisé
-st.markdown("""
-    <style>
-    /* Barre de titre avec dégradé rose */
-    .header-bar {
-        background: linear-gradient(to right, #ff5f6d, #ffc371);
-        padding: 10px;
-        text-align: center;
-        color: white;
-        font-size: 24px;
-        font-weight: bold;
-        border-radius: 15px;
-        margin-bottom: 15px;
-        position: relative;
-    }
-    
-    /* Icône de déconnexion en haut à droite */
-    .logout-icon {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-    }
-    
-    /* Style général sombre */
-    body, .main-content, .reportview-container, .sidebar .sidebar-content {
-        background-color: #2c3e50;
-        color: white;
-    }
-
-    /* Bouton stylisé type iOS vide à l'intérieur */
-    .stButton>button {
-        color: #ff5f6d;
-        border: 2px solid #ff5f6d;
-        background-color: transparent;
-        border-radius: 20px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s, color 0.3s;
-        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    .stButton>button:hover {
-        background-color: #ff5f6d;
-        color: white;
-    }
-
-    /* Style des cartes de galerie */
-    .gallery-card {
-        background-color: #34495e;
-        padding: 20px;
-        border-radius: 10px;
-        margin: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        color: white;
-    }
-    .gallery-title {
-        font-size: 1.5em;
-        color: #ffc371;
-    }
-
-    /* Lien cliquable pour inscription avec icône en haut à droite */
-    .signup-link {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        color: #ff5f6d;
-        font-size: 16px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-    }
-    .signup-link i {
-        margin-right: 5px;
-        font-size: 18px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Barre de titre avec dégradé rose
-st.markdown("<div class='header-bar'>Bienvenue au Théâtre AI</div>", unsafe_allow_html=True)
-
 # Fonction d'affichage de l'icône de déconnexion
 def afficher_icone_deconnexion():
-    if st.button("Déconnexion"):
+    if st.button("Déconnexion", key="logout", help="Déconnexion", type="primary"):
         st.session_state.authenticated_user = None
         st.session_state.page = "connexion"
 
@@ -185,10 +164,9 @@ def afficher_page_connexion():
         else:
             st.error("Nom d'utilisateur ou mot de passe incorrect")
 
-    # Bouton "Créer un compte" sous le bouton de connexion
+    # Bouton "Créer un compte" sous le bouton de connexion, même taille que le bouton de connexion
     if st.button("Créer un compte"):
         st.session_state.page = "inscription"
-
 
 # Page de création de pièce
 def afficher_page_creation():
@@ -205,39 +183,19 @@ def afficher_page_creation():
         session.commit()
         st.success("Votre création a été enregistrée dans la base de données !")
 
-
-
-import streamlit as st
-
+# Page de la galerie
 def afficher_page_galerie():
     st.markdown("<h1>Galerie de Pièces en PDF 🎭</h1>", unsafe_allow_html=True)
     st.write("Cliquez sur une pièce pour l'ouvrir dans un nouvel onglet.")
-
-    # Liste des pièces avec le lien brut GitHub pour chaque PDF
     pieces = [
-        {
-            "titre": "Les Dieux Réincarnés",
-            "resume": "Dans un monde en déclin, les anciens dieux se battent contre des forces modernes qui menacent leur existence.",
-            "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/dieux_reincarnes.pdf"
-        },
-        {
-            "titre": "L'Artefact du Temps",
-            "resume": "Un roi grec découvre un artefact mystérieux qui manipule le temps, bouleversant les civilisations qu’il explore.",
-            "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/artefact_temps.pdf"
-        },
-        {
-            "titre": "La Prophétie des Mages",
-            "resume": "Dans un royaume lointain, la prophétie d’un mage annonce des bouleversements pour le futur.",
-            "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/prophetie_mages.pdf"
-        }
+        {"titre": "Les Dieux Réincarnés", "resume": "Dans un monde en déclin, les anciens dieux se battent contre des forces modernes qui menacent leur existence.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/dieux_reincarnes.pdf"},
+        {"titre": "L'Artefact du Temps", "resume": "Un roi grec découvre un artefact mystérieux qui manipule le temps, bouleversant les civilisations qu’il explore.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/artefact_temps.pdf"},
+        {"titre": "La Prophétie des Mages", "resume": "Dans un royaume lointain, la prophétie d’un mage annonce des bouleversements pour le futur.", "lien": "https://raw.githubusercontent.com/BenJelloun-Youne/TheAIa/main/prophetie_mages.pdf"}
     ]
-
     for piece in pieces:
         st.markdown(f"### {piece['titre']}")
         st.write(piece["resume"])
         st.markdown(f"[📖 Ouvrir {piece['titre']}]({piece['lien']})", unsafe_allow_html=True)
-
-
 
 # Page de l'historique
 def afficher_page_historique():
@@ -256,7 +214,7 @@ def afficher_page_historique():
 
 # Navigation avec le menu et affichage des pages
 if st.session_state.authenticated_user:
-    afficher_icone_deconnexion()  # Affichage de l'icône de déconnexion
+    afficher_icone_deconnexion()
     st.sidebar.title("Menu")
     choix_page = st.sidebar.radio("Aller à", ["Créer une Pièce", "Galerie des Pièces", "Historique des Créations"])
     st.session_state.page = choix_page
