@@ -13,7 +13,7 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 EMAIL_SENDER = "dataygit@gmail.com"  # Votre adresse Gmail
 EMAIL_PASSWORD = "cjwz pycw fwtb pvlm"  # Mot de passe d'application pour Gmail
-EMAIL_SUPPORT = "support_email@example.com"  # Adresse e-mail de support
+EMAIL_SUPPORT = "ayaroch2000@gmail.com"  # Adresse e-mail de support
 
 
 # Configuration de la page
