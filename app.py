@@ -4,6 +4,17 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 import os
 import base64
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Configuration de l'e-mail
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_SENDER = "dataygit@gmail.com"  # Votre adresse Gmail
+EMAIL_PASSWORD = "cjwz pycw fwtb pvlm"  # Mot de passe d'application pour Gmail
+EMAIL_SUPPORT = "support_email@example.com"  # Adresse e-mail de support
+
 
 # Configuration de la page
 st.set_page_config(page_title="Théâtre AI", page_icon="🎭", layout="centered")
@@ -166,6 +177,23 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
+def envoyer_email(destinataire, sujet, message):
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = EMAIL_SENDER
+        msg["To"] = destinataire
+        msg["Subject"] = sujet
+        msg.attach(MIMEText(message, "plain"))
+        
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(EMAIL_SENDER, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_SENDER, destinataire, msg.as_string())
+            
+        print("E-mail envoyé avec succès!")
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'e-mail: {e}")
+
 # Fonction pour afficher un titre avec logo et icône de notification
 def afficher_titre_avec_logo(titre, username=None):
     st.markdown("<div class='animated-bar'></div>", unsafe_allow_html=True)
@@ -239,7 +267,14 @@ def signup(username, password, email, first_name, last_name, phone):
                     first_name=first_name, last_name=last_name, phone=phone)
     session.add(new_user)
     session.commit()
+    
+    # Envoyer un e-mail de notification au support
+    sujet = "Nouvelle Inscription"
+    message = f"Un nouvel utilisateur s'est inscrit.\n\nNom d'utilisateur : {username}\nEmail : {email}\nNom : {first_name} {last_name}\nTéléphone : {phone}"
+    envoyer_email(EMAIL_SUPPORT, sujet, message)
+    
     return True
+
 
 # Page d'inscription
 def afficher_page_inscription():
@@ -296,6 +331,12 @@ def afficher_page_creation():
         session.add(new_creation)
         session.commit()
         st.success("Votre création a été enregistrée dans la base de données !")
+        
+        # Envoyer un e-mail de notification au support
+        sujet = "Nouvelle Création de Pièce"
+        message = f"Une nouvelle pièce a été créée par l'utilisateur {username}.\n\nThème : {theme}\nÉpoque : {era}\nDescription : {description}"
+        envoyer_email(EMAIL_SUPPORT, sujet, message)
+
 
 # Page de la galerie
 def afficher_page_galerie():
