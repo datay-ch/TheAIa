@@ -177,6 +177,24 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
+def envoyer_email_utilisateur(destinataire, sujet, message):
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = EMAIL_SENDER
+        msg["To"] = destinataire
+        msg["Subject"] = sujet
+        msg.attach(MIMEText(message, "plain"))
+        
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(EMAIL_SENDER, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_SENDER, destinataire, msg.as_string())
+            
+        print("E-mail utilisateur envoyé avec succès!")
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'e-mail utilisateur: {e}")
+
+
 def envoyer_email(destinataire, sujet, message):
     try:
         msg = MIMEMultipart()
@@ -268,10 +286,15 @@ def signup(username, password, email, first_name, last_name, phone):
     session.add(new_user)
     session.commit()
     
+    # Envoyer un e-mail de bienvenue à l'utilisateur
+    sujet_bienvenue = "Bienvenue sur Théâtre AI"
+    message_bienvenue = f"Bonjour {first_name} {last_name},\n\nBienvenue sur Théâtre AI ! Nous sommes ravis de vous compter parmi nous.\n\nCordialement,\nÉquipe support AYA Rochdi"
+    envoyer_email_utilisateur(email, sujet_bienvenue, message_bienvenue)
+    
     # Envoyer un e-mail de notification au support
-    sujet = "Nouvelle Inscription"
-    message = f"Un nouvel utilisateur s'est inscrit.\n\nNom d'utilisateur : {username}\nEmail : {email}\nNom : {first_name} {last_name}\nTéléphone : {phone}"
-    envoyer_email(EMAIL_SUPPORT, sujet, message)
+    sujet_support = "Nouvelle Inscription"
+    message_support = f"Un nouvel utilisateur s'est inscrit.\n\nNom d'utilisateur : {username}\nEmail : {email}\nNom : {first_name} {last_name}\nTéléphone : {phone}"
+    envoyer_email(EMAIL_SUPPORT, sujet_support, message_support)
     
     return True
 
@@ -321,22 +344,29 @@ def afficher_page_creation():
     username = st.session_state.authenticated_user.username
     afficher_titre_avec_logo("Créer une Nouvelle Pièce", username)
     user_id = st.session_state.authenticated_user.id
+    email = st.session_state.authenticated_user.email  # Récupérer l'email de l'utilisateur
+    
     with st.form(key="creation_form"):
         theme = st.text_input("Thème de la pièce")
         era = st.text_input("Époque souhaitée")
         description = st.text_area("Description de la pièce")
         submit_button = st.form_submit_button(label="Générer la pièce")
+    
     if submit_button:
         new_creation = Creation(theme=theme, era=era, description=description, user_id=user_id)
         session.add(new_creation)
         session.commit()
         st.success("Votre création a été enregistrée dans la base de données !")
         
+        # Envoyer un e-mail de confirmation à l'utilisateur
+        sujet_confirmation = "Confirmation de Création de Pièce"
+        message_confirmation = f"Bonjour {username},\n\nVotre création de pièce a été enregistrée avec succès !\n\nDétails de votre création:\nThème : {theme}\nÉpoque : {era}\nDescription : {description}\n\nVeuillez patienter 48 heures pour que l'IA finalise la création.\n\nCordialement,\nÉquipe support AYA Rochdi"
+        envoyer_email_utilisateur(email, sujet_confirmation, message_confirmation)
+        
         # Envoyer un e-mail de notification au support
-        sujet = "Nouvelle Création de Pièce"
-        message = f"Une nouvelle pièce a été créée par l'utilisateur {username}.\n\nThème : {theme}\nÉpoque : {era}\nDescription : {description}"
-        envoyer_email(EMAIL_SUPPORT, sujet, message)
-
+        sujet_support = "Nouvelle Création de Pièce"
+        message_support = f"Une nouvelle pièce a été créée par l'utilisateur {username}.\n\nThème : {theme}\nÉpoque : {era}\nDescription : {description}"
+        envoyer_email(EMAIL_SUPPORT, sujet_support, message_support)
 
 # Page de la galerie
 def afficher_page_galerie():
